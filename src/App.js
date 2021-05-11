@@ -61,6 +61,7 @@ function App(props) {
     { id: 'first_name', label: 'First Name' },
     { id: 'last_name', label: 'Last Name' },
     { id: 'position', label: 'Position', disableSorting: true },
+    { id: 'team', label: 'Team' }
   ]
 
   const searchPlayers = e => {
@@ -142,13 +143,14 @@ function App(props) {
                   .filter(player => (
                     player.first_name.toLowerCase().includes(search.toLowerCase()) || player.last_name.toLowerCase().includes(search.toLowerCase())
                   )).map(player => (
-                    <TableRow key={player.id}>
+                    <TableRow key={player.id} className='table-rows'>
                       <TableCell component="th" scope="row" align="center">
                         {player.id}
                       </TableCell>
                       <TableCell align="center">{player.first_name}</TableCell>
                       <TableCell align="center">{player.last_name}</TableCell>
                       <TableCell align="center">{player.position}</TableCell>
+                      <TableCell align="center">{player.team.full_name}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>

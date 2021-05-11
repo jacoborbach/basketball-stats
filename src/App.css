@@ -25,3 +25,7 @@
 .table-pagination {
   color: white;
 }
+
+.table-rows:nth-of-type(even) {
+  background-color: rgb(182, 129, 139);
+}

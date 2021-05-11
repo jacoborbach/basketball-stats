@@ -11,21 +11,17 @@ import TextField from '@material-ui/core/TextField';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import orderBy from "lodash/orderBy";
-import SpinnerContainer from './Components/Spinner/SpinnerContainer'
+import SpinnerContainer from './SpinnerComponent/SpinnerContainer'
 import { connect } from 'react-redux'
 import { getPlayers } from './redux/playerReducer'
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 
 const useStyles = makeStyles({
   tablehead: {
     background: 'rgb(188, 70, 92)'
-  },
-  red: {
-    color: 'red'
-  },
-  green: {
-    color: 'green'
   },
   table: {
     minWidth: 650,
@@ -35,6 +31,7 @@ const useStyles = makeStyles({
 function App(props) {
   const classes = useStyles();
   const [players, setPlayers] = useState([])
+  const [meta, setMeta] = useState([])
   const [search, setSearch] = useState('');
   const [columnToSort, setColumnToSort] = useState('')
   const [sortDirection, setSortDirection] = useState('')
@@ -43,11 +40,13 @@ function App(props) {
     asc: 'desc',
     desc: 'asc'
   }
+  const [page, setPage] = useState(1)
 
   useEffect(() => {
     axios.get('https://www.balldontlie.io/api/v1/players')
       .then(res => {
         setPlayers(res.data.data)
+        setMeta(res.data.meta)
         setLoading(!isLoading);
         props.getPlayers(res.data)
       })
@@ -79,16 +78,36 @@ function App(props) {
     }
   }
 
-  console.log(players)
+  const handlePageChangeInc = () => {
+    setPage(page + 1)
+    axios.get(`https://www.balldontlie.io/api/v1/players?page=${page}`)
+      .then(res => {
+        setPlayers([])
+        setPlayers(res.data.data)
+      })
+      .catch(err => console.log(err))
+  };
+
+  const handlePageChangeDec = (pageNum, newPage) => {
+    setPage(page - 1)
+    axios.get(`https://www.balldontlie.io/api/v1/players?page=${page}`)
+      .then(res => {
+        setPlayers([])
+        setPlayers(res.data.data)
+      })
+      .catch(err => console.log(err))
+  };
+
+  console.log(page)
   return (
     <div className="App">
       <h1>NBA HALL OF ALL PLAYERS EVER</h1>
 
       {isLoading ? <SpinnerContainer /> :
         <section>
-          <TextField onChange={e => searchPlayers(e)} variant="outlined" value={search} />
+          <TextField onChange={e => searchPlayers(e)} label="Search Players" variant="outlined" value={search} />
           <TableContainer className='table-container' component={Paper}>
-            <Table className={classes.table} aria-label="simple table">
+            <Table stickyHeader aria-label="sticky table">
               <TableHead className={classes.tablehead}>
                 <TableRow>
                   {columnHeads.map(column => (
@@ -135,6 +154,11 @@ function App(props) {
               </TableBody>
             </Table>
           </TableContainer>
+          <br />
+          <div>
+            <ArrowBackIosIcon title="Next 100" onClick={handlePageChangeDec} className='table-pagination' />
+            <ArrowForwardIosIcon title="Prev. 100" onClick={handlePageChangeInc} className='table-pagination' />
+          </div>
         </section>
       }
 

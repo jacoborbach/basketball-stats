@@ -1,5 +1,10 @@
 .App {
   text-align: center;
+  background-image: url('/Users/jacoborbach/BallisLife/basketball-players/src/photo-1525914813433-886dc018469d.jpeg');
+  height: 100vh;
+  overflow: auto;
+  background-repeat: no-repeat;
+  background-size:cover
 }
 
 .table-container {
@@ -15,4 +20,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.table-pagination {
+  color: white;
 }
